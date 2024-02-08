@@ -3,9 +3,12 @@
   "version": "0.0.3",
   "description": "API project for freeCodeCamp",
   "main": "index.js",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon --inspect index.js"
+    "dev": "node index.js"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
