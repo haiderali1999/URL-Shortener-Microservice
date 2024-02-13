@@ -3,8 +3,8 @@ const express = require('express');
 const urlparser = require("url")
 const cors = require('cors');
 require('dotenv').config();
-const net = require('net');
-const dns = require("dns")
+const dns = require("dns");
+const path = require("path");
 const app = express();
 
 const client = new MongoClient(process.env.DB_URL);
@@ -18,10 +18,10 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-app.use('/public', express.static(`${process.cwd()}/public`));
+app.use(express.static(__dirname + '/public'))
 
 app.get('/', function (req, res) {
-  res.sendFile(process.cwd() + '/views/index.html');
+  res.sendFile(__dirname + '/views/index.html');
 });
 
 // Your first API endpoint
@@ -102,7 +102,7 @@ app.get('/api/shorturl/:short_url', async (req, res) => {
   try {
     const { short_url } = req.params
     //convert string into integer with plus
-    const urlDoc = await urls.findOne({shortUrl:+short_url})
+    const urlDoc = await urls.findOne({ shortUrl: +short_url })
     res.redirect(urlDoc.url)
   } catch (error) {
     console.log(error)
