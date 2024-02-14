@@ -31,17 +31,11 @@ app.get('/api/hello', function (req, res) {
 
 app.post('/api/shorturl', (req, res) => {
   const { url } = req.body
-  const ip6Option = {
-    family: 6,
-    hints: dns.ADDRCONFIG | dns.V4MAPPED,
-  };
-  console.log(url)
-  debugger
-  // const { port, hostname } = new URL(url)
+
   const { hostname } = urlparser.parse(url)
   dns.lookup(hostname, async (err, address) => {
-    if (err) {
-      res.json({ error: "Invalid Url" })
+    if (!address) {
+      res.json({ error: "invalid url" })
     }
     else {
       const urlCount = await urls.countDocuments();
@@ -54,51 +48,9 @@ app.post('/api/shorturl', (req, res) => {
       res.json({ original_url: url, short_url: urlCount })
     }
   })
-
-  // dns.lookup(hostname, ip6Option, (err, address, family) => {
-  //   if (err) {
-  //     res.json({ "error": "Invalid URL" })
-  //   }
-  //   else {
-
-  //     const socket = new net.Socket();
-  //     socket.setTimeout(5000); // set a timeout in milliseconds
-
-  //     socket.on('connect', () => {
-  //       console.log(`Connection to ${address}:${port} successful.`);
-  //       const shorUrlGenerate = (url) => {
-  //         let shortUrl = 0;
-  //         for (let key in url) {
-  //           shortUrl += key.charCodeAt();
-  //         }
-  //         return shortUrl
-  //       }
-  //       const short_url = shorUrlGenerate(url)
-  //       res.json({ original_url: url, short_url: short_url })
-  //       socket.end();
-  //     });
-
-  //     socket.on('timeout', () => {
-  //       console.error(`Connection to ${address}:${port} timed out.`);
-  //       socket.destroy();
-  //     });
-
-  //     socket.on('error', (error) => {
-  //       console.error(`Error connecting to ${address}:${port}:`, error);
-  //       socket.destroy();
-  //     });
-
-  //     socket.connect(port, address);
-
-
-  //   }
-  //   // console.log('address: %j family: IPv%s', address, family)
-  // })
-
 })
 
 app.get('/api/shorturl/:short_url', async (req, res) => {
-  debugger
   try {
     const { short_url } = req.params
     //convert string into integer with plus
